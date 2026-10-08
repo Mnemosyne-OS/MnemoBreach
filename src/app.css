@@ -1,0 +1,339 @@
+/*
+ * app.css — MnemoBreach's look.
+ *
+ * Base chrome rides the HOST tokens so the cartridge sits next to the others
+ * under any shell theme. Own accents: one colour per severity of what leaked.
+ */
+
+.bw-root {
+  --bw-text: var(--text-primary, #ece9f2);
+  --bw-muted: var(--text-muted, #9d97a8);
+  --bw-void: var(--bg-void, #111017);
+  --bw-glass: color-mix(in srgb, var(--bw-text) 4.5%, transparent);
+  --bw-edge: color-mix(in srgb, var(--bw-text) 11%, transparent);
+  --bw-edge-hi: color-mix(in srgb, var(--bw-text) 22%, transparent);
+
+  --bw-accent: #7aa7ff;
+  --bw-bad: #ff6b6b;
+  --bw-warn: #f2b45c;
+  --bw-ok: #6fd3b0;
+  --sev-password: #ff6b6b;
+  --sev-contact: #f2b45c;
+  --sev-email: #7aa7ff;
+  --sev-other: #9d97a8;
+
+  position: relative;
+  isolation: isolate;
+  height: 100vh;
+  overflow: auto;
+  color: var(--bw-text);
+  background: var(--bw-void);
+}
+
+/* Glass needs something behind it to bend: slow colour fields, fixed so the
+   tiles slide over them while the page scrolls. */
+.bw-root::before {
+  content: ''; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 34% at 12% 8%, color-mix(in srgb, var(--bw-accent) 30%, transparent), transparent 70%),
+    radial-gradient(32% 30% at 88% 22%, color-mix(in srgb, #c58bf2 24%, transparent), transparent 70%),
+    radial-gradient(40% 36% at 70% 92%, color-mix(in srgb, var(--bw-ok) 18%, transparent), transparent 70%),
+    radial-gradient(30% 30% at 18% 78%, color-mix(in srgb, var(--bw-bad) 14%, transparent), transparent 70%);
+  filter: blur(30px);
+  animation: bw-drift 28s ease-in-out infinite alternate;
+}
+@keyframes bw-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-2%, 2%, 0) scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) { .bw-root::before { animation: none; } }
+
+/* ── The board: tiles placed by name, two columns, one under 900 px ─────── */
+.bw-grid {
+  max-width: 1240px; margin: 0 auto; padding: 28px 24px 48px;
+  display: grid; gap: 18px; align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "head head"
+    "search password"
+    "search options"
+    "timeline timeline"
+    "news catalogue"
+    "truth truth";
+}
+.bw-header { grid-area: head; padding: 4px 4px 2px; }
+.is-search { grid-area: search; }
+.is-password { grid-area: password; }
+.is-options { grid-area: options; }
+.is-timeline { grid-area: timeline; }
+.is-news { grid-area: news; }
+.is-catalogue { grid-area: catalogue; }
+.bw-truth { grid-area: truth; }
+.is-search { align-self: stretch; }
+/* The news tile is short next to the long catalogue: it follows the scroll. */
+.bw-card.is-news { position: sticky; top: 16px; }
+/* The key and the manual route, one panel each, inside one tile. */
+.is-options { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+@media (max-width: 900px) {
+  .bw-grid {
+    padding: 20px 16px 40px; gap: 14px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "search" "password" "options" "timeline" "news" "catalogue" "truth";
+  }
+  .bw-card.is-news { position: relative; top: auto; }
+}
+
+.bw-header h1 {
+  margin: 0 0 6px; font-size: 1.9rem; letter-spacing: -0.02em;
+  background: linear-gradient(100deg, var(--bw-text) 30%, color-mix(in srgb, var(--bw-accent) 70%, var(--bw-text)));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.bw-header p { margin: 0; }
+.bw-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.bw-title-row h1 { margin: 0; }
+.bw-version {
+  padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  color: var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bw-accent) 35%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--bw-text) 16%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+
+/* Merged identifiers tile: where a search goes, said once above the list. */
+.bw-source {
+  margin: 0 0 12px; padding: 8px 12px; border-radius: 12px; font-size: 0.8125rem; color: var(--bw-muted);
+  background: color-mix(in srgb, var(--bw-void) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bw-text) 8%, transparent);
+}
+.bw-push { margin-left: auto; }
+.bw-add { margin-top: 14px; }
+
+/* ── Liquid glass ─────────────────────────────────────────────────────── */
+.bw-card {
+  --tone: var(--bw-accent);
+  position: relative;
+  padding: 20px;
+  border-radius: 20px;
+  background:
+    linear-gradient(155deg,
+      color-mix(in srgb, var(--bw-text) 9%, transparent),
+      color-mix(in srgb, var(--bw-text) 2.5%, transparent) 55%,
+      color-mix(in srgb, var(--tone) 6%, transparent));
+  border: 1px solid color-mix(in srgb, var(--bw-text) 13%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--bw-text) 18%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--bw-void) 40%, transparent),
+    0 18px 40px -18px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  transition: border-color 0.25s ease;
+}
+/* The sheen from the top-left corner, tinted by the tile's tone. */
+.bw-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 60% at 0% 0%, color-mix(in srgb, var(--tone) 14%, transparent), transparent 55%);
+}
+.bw-card > * { position: relative; }
+.bw-card:hover { border-color: color-mix(in srgb, var(--tone) 35%, transparent); }
+
+.is-search { --tone: var(--bw-accent); }
+.is-password { --tone: var(--bw-bad); }
+.is-options { --tone: #c58bf2; }
+.is-timeline { --tone: var(--bw-warn); }
+.is-news { --tone: var(--bw-ok); }
+.is-catalogue { --tone: var(--bw-muted); }
+
+.bw-tile-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.bw-chip {
+  flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tone) 32%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--bw-text) 16%, transparent);
+}
+.bw-tile-titles { min-width: 0; }
+.bw-tile-titles h2, .bw-tile-titles h3 { margin: 0 0 4px; font-size: 1.05rem; line-height: 1.3; }
+.bw-tile-titles h3 { font-size: 0.95rem; }
+.bw-tile-titles .bw-hint { margin: 0; }
+.bw-card h2 { margin: 0 0 6px; font-size: 1.05rem; }
+.bw-hint { margin: 0 0 12px; color: var(--bw-muted); font-size: 0.875rem; line-height: 1.45; }
+
+/* A panel inside a tile: same glass, one step quieter. */
+.bw-sub {
+  padding: 14px; border-radius: 14px;
+  background: color-mix(in srgb, var(--bw-void) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bw-text) 8%, transparent);
+}
+.bw-sub .bw-tile-head { margin-bottom: 10px; }
+.bw-sub .bw-chip { width: 30px; height: 30px; border-radius: 9px; }
+.bw-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.bw-pill {
+  padding: 7px 12px; border-radius: 999px; font: inherit; font-size: 0.8125rem; cursor: pointer;
+  color: var(--bw-text); background: color-mix(in srgb, var(--bw-text) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bw-text) 14%, transparent);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.bw-pill:hover { background: color-mix(in srgb, var(--tone) 16%, transparent); border-color: color-mix(in srgb, var(--tone) 40%, transparent); }
+.bw-muted { color: var(--bw-muted); }
+.bw-small { font-size: 0.8125rem; margin: 8px 0; }
+.bw-error { color: var(--bw-bad); margin: 8px 0 0; }
+.bw-notice { margin-top: 8px !important; color: var(--bw-warn); font-size: 0.875rem; }
+
+.bw-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.bw-input {
+  flex: 1; min-width: 180px; width: 100%; padding: 9px 12px; border-radius: 10px;
+  border: 1px solid var(--bw-edge); background: color-mix(in srgb, var(--bw-void) 70%, transparent);
+  color: var(--bw-text); font: inherit;
+}
+.bw-input:focus {
+  outline: none; border-color: var(--tone, var(--bw-accent));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone, var(--bw-accent)) 18%, transparent);
+}
+.bw-btn {
+  padding: 9px 16px; border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--tone, var(--bw-accent)) 45%, transparent);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--tone, var(--bw-accent)) 30%, transparent),
+    color-mix(in srgb, var(--tone, var(--bw-accent)) 14%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--bw-text) 20%, transparent);
+  color: var(--bw-text); font: inherit; font-weight: 500; cursor: pointer;
+  transition: filter 0.2s ease;
+}
+.bw-btn:not(:disabled):hover { filter: brightness(1.15); }
+.bw-btn:disabled { opacity: 0.5; cursor: default; }
+.bw-link { background: none; border: none; color: var(--bw-muted); cursor: pointer; font: inherit; text-decoration: underline; }
+
+.bw-verdict { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; }
+.bw-verdict.is-bad { background: color-mix(in srgb, var(--bw-bad) 16%, transparent); border: 1px solid color-mix(in srgb, var(--bw-bad) 40%, transparent); }
+.bw-verdict.is-neutral { background: color-mix(in srgb, var(--bw-ok) 10%, transparent); border: 1px solid color-mix(in srgb, var(--bw-ok) 30%, transparent); }
+
+.bw-ids { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.bw-ids li { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.bw-reveal {
+  font-family: var(--font-mono, ui-monospace, monospace); background: none; color: var(--bw-text);
+  border: 1px dashed var(--bw-edge-hi); border-radius: 8px; padding: 4px 10px; cursor: pointer;
+  user-select: none; -webkit-user-select: none; touch-action: none;
+}
+.bw-reveal.is-open { border-style: solid; border-color: var(--bw-accent); }
+
+.bw-locked {
+  margin-top: 14px; padding: 10px 12px; border-radius: 10px; border: 1px dashed var(--bw-edge);
+  display: flex; flex-direction: column; gap: 2px; color: var(--bw-muted); font-size: 0.875rem;
+}
+.bw-locked strong { color: var(--bw-text); font-weight: 600; }
+
+.bw-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8125rem; color: var(--bw-muted); margin-bottom: 8px; }
+.bw-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.bw-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; display: inline-block; }
+.bw-dot.sev-password { background: var(--sev-password); }
+.bw-dot.sev-contact { background: var(--sev-contact); }
+.bw-dot.sev-email { background: var(--sev-email); }
+.bw-dot.sev-other { background: var(--sev-other); }
+
+.bw-breaches, .bw-breaches ul { list-style: none; margin: 0; padding: 0; }
+.bw-year { margin: 14px 0 4px; font-size: 0.8125rem; color: var(--bw-muted); letter-spacing: 0.04em; }
+.bw-breach { border-bottom: 1px solid var(--bw-edge); }
+.bw-breach-head {
+  width: 100%; display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center;
+  padding: 8px 4px; background: none; border: none; color: var(--bw-text); font: inherit; text-align: left; cursor: pointer;
+}
+.bw-breach-head:hover { background: var(--bw-glass); }
+.bw-breach-title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bw-breach-domain, .bw-breach-date { color: var(--bw-muted); font-size: 0.8125rem; white-space: nowrap; }
+.bw-breach-body { padding: 4px 4px 12px 24px; font-size: 0.875rem; }
+.bw-breach-body dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0 0 8px; }
+.bw-breach-body dt { color: var(--bw-muted); }
+.bw-breach-body dd { margin: 0; }
+.bw-desc { margin: 0; color: var(--bw-muted); line-height: 1.5; }
+.bw-flag { margin: 0 0 6px; color: var(--bw-warn); }
+.bw-more { margin-top: 12px; }
+.bw-flagged { margin-top: 16px; color: var(--bw-muted); }
+.bw-flagged summary { cursor: pointer; }
+
+.bw-truth {
+  padding: 14px 16px; border-radius: 20px; text-align: center; font-weight: 600;
+  backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+  border: 1px solid color-mix(in srgb, var(--bw-warn) 40%, transparent);
+  background: color-mix(in srgb, var(--bw-warn) 10%, transparent);
+}
+
+@media (max-width: 520px) {
+  .bw-breach-head { grid-template-columns: auto 1fr auto; }
+  .bw-breach-domain { display: none; }
+}
+
+.bw-full { flex-basis: 100%; margin: 0; }
+.bw-accounts { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+/* A long answer (hundreds of breaches) scrolls inside its tile, so the tiles
+   next to it keep their size. */
+.bw-account .bw-breaches {
+  margin-top: 6px; max-height: 360px; overflow-y: auto; padding-right: 6px;
+  scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--bw-text) 25%, transparent) transparent;
+}
+.bw-hit { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--bw-edge); }
+.bw-hit-leaked { grid-column: 2 / 4; }
+
+/* ── Lot 3: the timeline ─────────────────────────────────────────────── */
+.bw-cross { margin: 8px 0 12px; padding: 10px 12px; border-radius: 10px; font-size: 0.875rem;
+  background: color-mix(in srgb, var(--bw-warn) 10%, transparent); border: 1px solid color-mix(in srgb, var(--bw-warn) 35%, transparent); }
+.bw-cross p { margin: 0; }
+.bw-cross p + p { margin-top: 6px; }
+.bw-timeline-scroll {
+  max-height: 520px; overflow-y: auto; margin: 4px 0 8px; padding-right: 6px;
+  scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--bw-text) 25%, transparent) transparent;
+}
+.bw-timeline { width: 100%; height: auto; display: block; overflow: visible; }
+.bw-tl-grid { stroke: var(--bw-edge); stroke-width: 1; }
+.bw-tl-year { fill: var(--bw-muted); font-size: 11px; }
+.bw-tl-hit { fill: transparent; cursor: pointer; }
+.bw-tl-row:hover .bw-tl-hit, .bw-tl-row.is-sel .bw-tl-hit { fill: var(--bw-glass); }
+.bw-tl-row:focus { outline: none; }
+.bw-tl-row:focus-visible .bw-tl-hit { stroke: var(--bw-accent); }
+.bw-tl-bar { stroke-width: 4; stroke-linecap: round; }
+.bw-tl-bar.is-open { stroke: color-mix(in srgb, var(--bw-warn) 70%, transparent); }
+.bw-tl-bar.is-closed { stroke: color-mix(in srgb, var(--bw-ok) 70%, transparent); }
+.bw-tl-dot.sev-password { fill: var(--sev-password); }
+.bw-tl-dot.sev-contact { fill: var(--sev-contact); }
+.bw-tl-dot.sev-email { fill: var(--sev-email); }
+.bw-tl-dot.sev-other { fill: var(--sev-other); }
+.bw-tl-added { fill: var(--bw-text); opacity: 0.8; }
+.bw-tl-seen { fill: none; stroke: var(--bw-accent); stroke-width: 2; }
+.bw-tl-check { fill: var(--bw-ok); font-size: 14px; font-weight: 700; }
+.bw-tl-label { fill: var(--bw-text); font-size: 12px; }
+.bw-mark-diamond { width: 8px; height: 8px; background: var(--bw-text); opacity: 0.8; transform: rotate(45deg); display: inline-block; }
+.bw-mark-ring { width: 10px; height: 10px; border: 2px solid var(--bw-accent); border-radius: 50%; display: inline-block; }
+.bw-mark-check { color: var(--bw-ok); font-weight: 700; }
+.bw-findings {
+  list-style: none; margin: 8px 0 0; padding: 0 6px 0 0; max-height: 420px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--bw-text) 25%, transparent) transparent;
+}
+.bw-cross { max-height: 168px; overflow-y: auto; scrollbar-width: thin; }
+.bw-findings li { border-bottom: 1px solid var(--bw-edge); }
+.bw-finding-head { width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
+  padding: 8px 4px; background: none; border: none; color: var(--bw-text); font: inherit; text-align: left; cursor: pointer; }
+.bw-finding-head:hover, .bw-finding-head.is-sel { background: var(--bw-glass); }
+.bw-finding-line { margin: 0 4px 8px 24px; }
+.bw-dot.is-open { background: var(--bw-warn); }
+.bw-dot.is-handled { background: var(--bw-ok); }
+.bw-finding-body { margin-top: 12px; padding: 12px; border-radius: 10px; border: 1px solid var(--bw-edge-hi); font-size: 0.875rem; }
+.bw-finding-body h3 { margin: 0 0 8px; font-size: 1rem; }
+.bw-finding-body h4 { margin: 12px 0 6px; font-size: 0.875rem; }
+.bw-finding-body dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0 0 8px; }
+.bw-finding-body dt { color: var(--bw-muted); }
+.bw-finding-body dd { margin: 0; }
+.bw-actions { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.bw-actions label { display: flex; gap: 8px; align-items: baseline; cursor: pointer; }
+
+/* ── Lot 4: news and the background watch ─────────────────────────────── */
+.bw-subtitle { margin: 16px 0 6px; font-size: 0.95rem; }
+.bw-news { list-style: none; margin: 6px 0 8px; padding: 0; }
+.bw-news-row { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--bw-edge); }
+
+.bw-flag-tag { margin: 0 6px; padding: 1px 6px; border-radius: 6px; font-size: 0.75rem; color: var(--bw-warn);
+  border: 1px solid color-mix(in srgb, var(--bw-warn) 45%, transparent); }
+
+/* Decision 07/10: a fifth tier for identity, money, health and intimacy. */
+.bw-root { --sev-sensitive: #c58bf2; }
+.bw-dot.sev-sensitive, .bw-tl-dot.sev-sensitive { background: var(--sev-sensitive); fill: var(--sev-sensitive); }

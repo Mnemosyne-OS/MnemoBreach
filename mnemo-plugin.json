@@ -1,0 +1,39 @@
+{
+  "name": "@mnemosyne-plugins/mnemo-breach",
+  "displayName": "MnemoBreach",
+  "version": "0.2.0",
+  "vendor": "Mnemosyne Labs",
+  "license": "MIT",
+  "description": "See where your data has leaked: search your own email for free, put each breach on a timeline with what to do, and get told about new ones. A password is tested without being sent. No breach file is ever downloaded.",
+  "descriptionI18n": {
+    "en": "See where your data has leaked: search your own email for free, put each breach on a timeline with what to do, and get told about new ones. A password is tested without being sent. No breach file is ever downloaded.",
+    "fr": "Vois où tes données ont fuité : cherche ton propre email gratuitement, pose chaque fuite sur une frise avec quoi faire, et sois prévenu des nouvelles. Un mot de passe est testé sans être envoyé. Aucun fichier de fuite n'est jamais téléchargé.",
+    "es": "Mira dónde se han filtrado tus datos: busca tu propio correo gratis, pon cada filtración en una línea de tiempo con qué hacer y entérate de las nuevas. Una contraseña se comprueba sin enviarla. Nunca se descarga ningún archivo de filtración."
+  },
+  "keywords": [
+    "security",
+    "privacy",
+    "breach",
+    "password",
+    "pwned"
+  ],
+  "permissions": [
+    "breach:lookup",
+    "vault:write",
+    "watch:background"
+  ],
+  "updateStrategy": "git",
+  "entrypoints": {
+    "renderer": "index.html"
+  },
+  "widgets": [
+    {
+      "id": "mnemo-breach-main",
+      "icon": "🛡️",
+      "name": "MnemoBreach",
+      "route": "index.html",
+      "defaultWidth": 820,
+      "defaultHeight": 760
+    }
+  ]
+}
