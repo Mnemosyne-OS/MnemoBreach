@@ -1,6 +1,6 @@
 {
   "name": "@mnemosyne-plugins/mnemo-breach",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Check whether a password appears in known data breaches without sending it anywhere, and browse every public breach with its dates and what leaked.",

@@ -1,7 +1,7 @@
 {
   "name": "@mnemosyne-plugins/mnemo-breach",
   "displayName": "MnemoBreach",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "vendor": "Mnemosyne Labs",
   "license": "MIT",
   "category": "System",
