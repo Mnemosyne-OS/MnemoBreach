@@ -4,6 +4,7 @@
   "version": "0.2.0",
   "vendor": "Mnemosyne Labs",
   "license": "MIT",
+  "category": "System",
   "description": "See where your data has leaked: search your own email for free, put each breach on a timeline with what to do, and get told about new ones. A password is tested without being sent. No breach file is ever downloaded.",
   "descriptionI18n": {
     "en": "See where your data has leaked: search your own email for free, put each breach on a timeline with what to do, and get told about new ones. A password is tested without being sent. No breach file is ever downloaded.",
