@@ -1,0 +1,10 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MnemoBreach">
+  <defs>
+    <linearGradient id="breach-grad" x1="6" y1="42" x2="42" y2="6" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <path d="M24 5L39 11V22C39 31.5 32.5 39 24 43C15.5 39 9 31.5 9 22V11Z" fill="url(#breach-grad)" fill-opacity="0.16" stroke="url(#breach-grad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M25 11L21 20L27 24L22 34" stroke="url(#breach-grad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
