@@ -16,6 +16,7 @@ import { NewsCard } from './components/NewsCard';
 import { hasHost } from './lib/profile';
 import { PasswordCard } from './components/PasswordCard';
 import { CatalogueCard } from './components/CatalogueCard';
+import { BreachAgentActions } from './components/BreachAgentActions';
 import manifest from '../mnemo-plugin.json';
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
   useEffect(() => { startProfile(); }, []);
   return (
     <main className="bw-root">
+      <BreachAgentActions />
       <div className="bw-grid">
         <header className="bw-header">
           <div className="bw-title-row">

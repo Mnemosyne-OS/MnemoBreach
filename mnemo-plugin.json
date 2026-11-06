@@ -1,7 +1,7 @@
 {
   "name": "@mnemosyne-plugins/mnemo-breach",
   "displayName": "MnemoBreach",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "vendor": "Mnemosyne Labs",
   "license": "MIT",
   "category": "System",
@@ -24,6 +24,7 @@
     "vault:write",
     "watch:background"
   ],
+  "repository": "https://github.com/Mnemosyne-OS/MnemoBreach",
   "updateStrategy": "git",
   "entrypoints": {
     "renderer": "index.html"
@@ -37,5 +38,171 @@
       "defaultWidth": 820,
       "defaultHeight": 760
     }
-  ]
+  ],
+  "agentGuide": [
+    "Name a breach the way the person says it (« Adobe », « la fuite LinkedIn », « linkedin.com »): MnemoBreach finds it by its words. Several matches are refused with their names (AMBIGUOUS): pick one and call again.",
+    "To read: breaches for the person's timeline and what is left to do, catalogue for the public list, news for what is new.",
+    "Steps after a breach: password (changed the password), twoFactor (two-step login), phishing (watch for phishing mails), calls (scam calls), mail (postal mail), antivirus, allPasswords (changed every password). « J'ai tout fait » for one breach: markHandled.",
+    "« J'avais un compte chez X »: declare. Searching the person's email, testing a password and turning the watch on stay the person's own gestures."
+  ],
+  "agentActions": [
+    {
+      "id": "breaches",
+      "summary": "The breaches on the person's timeline: service, date, what leaked, found by a search or declared, and which protective steps are done or still to do.",
+      "details": "Emails are masked as on screen. exposedDays runs from the breach to the first step taken, or to today. A breach with no known date has no exposedDays.",
+      "effect": "read",
+      "params": {}
+    },
+    {
+      "id": "catalogue",
+      "summary": "Search the public list of known breaches (Have I Been Pwned) by service name or domain.",
+      "details": "Free and public; no identifier of the person is sent. onTimeline says whether it is already on the person's timeline.",
+      "effect": "read",
+      "params": {
+        "query": {
+          "type": "string",
+          "description": "Words of the service name or domain; empty = the most recent.",
+          "maxLength": 200
+        },
+        "limit": {
+          "type": "number",
+          "description": "How many to return (default 20).",
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    {
+      "id": "declare",
+      "summary": "Put a breach from the public list on the person's timeline (\"I had an account there\"), as the Declare button does.",
+      "effect": "write",
+      "params": {
+        "name": {
+          "type": "string",
+          "description": "The breach as the person says it (« Adobe », « la fuite LinkedIn », « linkedin.com ») or its name from catalogue.",
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    {
+      "id": "undeclare",
+      "summary": "Take a declared breach off the timeline. One found by a search of the person's email stays.",
+      "effect": "write",
+      "params": {
+        "name": {
+          "type": "string",
+          "description": "The breach as the person says it (« Adobe », « la fuite LinkedIn », « linkedin.com ») or its name from breaches.",
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    {
+      "id": "markAction",
+      "summary": "Mark a protective step as done (or not) for one breach: changed password, 2FA, watch for phishing, scam calls, mail, antivirus, all passwords.",
+      "details": "Only the steps listed for that breach in breaches apply (NOT_APPLICABLE otherwise). Calling it twice does not flip it back.",
+      "effect": "write",
+      "params": {
+        "name": {
+          "type": "string",
+          "description": "The breach as the person says it (« Adobe », « la fuite LinkedIn », « linkedin.com ») or its name from breaches.",
+          "maxLength": 200
+        },
+        "action": {
+          "type": "string",
+          "description": "The step.",
+          "enum": [
+            "password",
+            "twoFactor",
+            "phishing",
+            "calls",
+            "mail",
+            "antivirus",
+            "allPasswords"
+          ]
+        },
+        "done": {
+          "type": "boolean",
+          "description": "true = done (default), false = not done."
+        }
+      },
+      "required": [
+        "name",
+        "action"
+      ]
+    },
+    {
+      "id": "markHandled",
+      "summary": "Mark every protective step of one breach as done (« c'est réglé pour Adobe »), as ticking each of its boxes does.",
+      "details": "Only the steps that apply to that breach. A breach already handled stays as it is.",
+      "effect": "write",
+      "params": {
+        "name": {
+          "type": "string",
+          "description": "The breach as the person says it (« Adobe », « la fuite LinkedIn », « linkedin.com ») or its name from breaches.",
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    {
+      "id": "news",
+      "summary": "The breaches made public since the person last marked the news as seen: the ones on a service of the timeline first, then a count of the others.",
+      "details": "first = no memory yet (the first visit): nothing is announced. watchOn says whether the background watch runs.",
+      "effect": "read",
+      "params": {}
+    },
+    {
+      "id": "markNewsSeen",
+      "summary": "Mark the news as seen, as the card's « mark as seen » does: the next news starts from now.",
+      "effect": "write",
+      "params": {}
+    },
+    {
+      "id": "watchOff",
+      "summary": "Turn off the background watch of the timeline's services, as the card's « turn off » does.",
+      "details": "Turning it on stays a gesture of the person: the card says first what it sends.",
+      "effect": "write",
+      "params": {}
+    }
+  ],
+  "voiceCommands": {
+    "fr": [
+      "quelles fuites me concernent",
+      "quoi de neuf dans les fuites",
+      "j'avais un compte chez Adobe",
+      "j'ai changé mon mot de passe pour LinkedIn",
+      "j'ai activé la double authentification pour Dropbox",
+      "c'est réglé pour la fuite Adobe",
+      "marque les nouvelles comme vues",
+      "coupe la surveillance des fuites"
+    ],
+    "en": [
+      "which breaches concern me",
+      "what's new in the breaches",
+      "I had an account at Adobe",
+      "I changed my password for LinkedIn",
+      "I turned on two-factor for Dropbox",
+      "Adobe is handled",
+      "mark the news as seen",
+      "turn off the breach watch"
+    ],
+    "es": [
+      "qué filtraciones me afectan",
+      "qué hay de nuevo en las filtraciones",
+      "tenía una cuenta en Adobe",
+      "cambié mi contraseña de LinkedIn",
+      "activé la verificación en dos pasos para Dropbox",
+      "lo de Adobe está resuelto",
+      "marca las novedades como vistas",
+      "desactiva la vigilancia de filtraciones"
+    ]
+  }
 }

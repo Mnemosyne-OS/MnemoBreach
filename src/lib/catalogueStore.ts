@@ -30,6 +30,11 @@ export function loadCatalogue(force = false): Promise<void> {
   return inFlight;
 }
 
+/** The catalogue as it is now, outside React (the agent door, doc 149). */
+export function getCatalogueSnapshot(): CatalogueSnapshot {
+  return snap;
+}
+
 export function useCatalogue(): CatalogueSnapshot {
   return useSyncExternalStore((fn) => { listeners.add(fn); return () => { listeners.delete(fn); }; }, () => snap);
 }
